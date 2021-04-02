@@ -53,7 +53,7 @@ int ctlCode=0;
 boolean ctlAbort=false;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(1152000);
   pinMode(ledpin,OUTPUT);
   // PWM setup and attach
   ledcSetup(ledChannel, freq, resolution);
@@ -161,7 +161,8 @@ void loop() {
             if (offset>5){
               offset=0;
             }
-            Serial.println("offset = "+offset);
+            Serial.print("offset = ");
+            Serial.println(offset);
             for (int t=0;t<offset;t++){ 
               ledcWrite(ledChannel,255);
               delay(150);
@@ -170,7 +171,7 @@ void loop() {
             }
             break;
           default:
-            Serial.println("Unknown Control Code(1,2,3 only");
+            Serial.println("Unknown Control Code(1,2,3 only)");
             break;                          
         }
         ctlMode=false;
