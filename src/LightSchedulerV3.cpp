@@ -5,7 +5,8 @@
 //but not in ArduinoIDE
 void allOff();
 void allOn();
-void bootBlink();
+void bootBlinkPlugs();
+void cmdBlink(int);
 
 RCSwitch mySwitch = RCSwitch();
 
@@ -65,7 +66,7 @@ void setup() {
   mySwitch.setPulseLength(185);
   mySwitch.setRepeatTransmit(8);
   firstrun=true;
-  bootBlink();
+  bootBlinkPlugs();
   if (firstrun){ Serial.println("First Run"); }
 
   offsetTime = offset * 60 * 60 *1000;
@@ -88,38 +89,38 @@ void setup() {
 }
 
 void loop() {
-  ledcWrite(ledChannel,50);
+  ledcWrite(ledChannel,0); // power on indicator
+  // if the led is "on" (anything other than 0)
+  // the blink on button press sometime fails to got high
+  // seems to be a timing issue with pwm driver
   //Serial.println("Loop");
   if (ctlMode){
     //Serial.println("ctlMode is active");
     sw1state=digitalRead(sw1pin);
     //Serial.println("digitalRead1");
     if (sw1state == HIGH && !ctlAbort) {
-      ledcWrite(ledChannel,255);
+      //button is pressed
       ctlCode++;
       sw1LastPressed=millis();
       Serial.println(ctlCode);
-      delay(300);
-      ledcWrite(ledChannel,50);
-      delay(300);
+      ledcWrite(ledChannel,255);
+      delay(300);  // all delays in this if block add to debounce
+      ledcWrite(ledChannel,0);
+      delay(300);  // all delays in this if block add to debounce
       if (ctlCode>10 || ctlAbort){
         Serial.println("Control Aborted.");
         ctlMode=false;
         ctlCode=0;
         ctlAbort=true;
-        sw1LastPressed=millis(); 
+        sw1LastPressed=millis();
       }      
     } else {
        // if abort requested refuse input for short time
        if (ctlAbort){
-          ledcWrite(ledChannel,1);
-          delay(1000);
-          ledcWrite(ledChannel,10);
-          delay(1000);
-          ledcWrite(ledChannel,1);
-          delay(1000);
-          ledcWrite(ledChannel,50);
-          delay(1000);
+         Serial.println("ctlAbort");
+          ledcWrite(ledChannel,100);
+          delay(4000);
+          ledcWrite(ledChannel,0);
        }
        //Serial.println("waiting for ctlMode to end");
       if (millis() - sw1LastPressed > 1000){
@@ -137,7 +138,7 @@ void loop() {
               Serial.println("Manual On");
               allOn();
               manualMode=true;    
-            }  
+            }
             break;
           case 2:
           // toggle manualMode - sync autoMode
@@ -152,7 +153,7 @@ void loop() {
               allOn();
               manualMode=true;
               autoMode=true; // force autoMode sync to manual mode  
-            }              
+            }           
             break;
           case 3:
             // increment offset
@@ -163,12 +164,7 @@ void loop() {
             }
             Serial.print("offset = ");
             Serial.println(offset);
-            for (int t=0;t<offset;t++){ 
-              ledcWrite(ledChannel,255);
-              delay(150);
-              ledcWrite(ledChannel,1);
-              delay(300);
-            }
+            cmdBlink(offset);
             break;
           default:
             Serial.println("Unknown Control Code(1,2,3 only)");
@@ -193,7 +189,7 @@ void loop() {
   // if autoMode(true)
   if (autoMode){
     elapsedTime=millis()-lastOnTime;
-    //Serial.print("Lights On : ");
+    //Serial.print("Plugs On : ");
     //Serial.print(elapsedTime);
     //Serial.print(" of ");
     //Serial.println(onTime);    
@@ -204,11 +200,11 @@ void loop() {
       elapsedTime=0;
       autoMode=false;
       manualMode=false;
-      ledcWrite(ledChannel,50);
+      ledcWrite(ledChannel,20); 
     }
   } else {
     elapsedTime=millis()-lastOffTime;
-    //Serial.print("Lights Off : ");
+    //Serial.print("Plugs Off : ");
     //Serial.print(elapsedTime);
     //Serial.print(" of ");
     //Serial.println(offTime);    
@@ -219,7 +215,7 @@ void loop() {
       elapsedTime=0;
       autoMode=true;
       manualMode=true;
-      ledcWrite(ledChannel,50);
+      ledcWrite(ledChannel,20);
     }    
   }
 
@@ -243,11 +239,11 @@ void allOn(){
   mySwitch.sendTriState(sw5on);  
 }
 
-void bootBlink(){
-  // Blink Lights  at power up
+void bootBlinkPlugs(){
+  // Blink Plugs at power up
   int blinkOn = 2000;
   int blinkOff = 1000;
-  Serial.println("Lights should blink at power up.");
+  Serial.println("Plugs should blink at power up.");
   allOff();
   delay(blinkOff);  
   allOn();
@@ -256,3 +252,14 @@ void bootBlink(){
   delay(blinkOff);  
 }
 
+void cmdBlink(int count){
+  // show control codes by blinking status led.
+  ledcWrite(ledChannel,0);
+  delay(100);  
+  for (int i = 0; i < count; i++) {    
+    ledcWrite(ledChannel,255);
+    delay(300);
+    ledcWrite(ledChannel,0);
+    delay(100);
+  }
+}
