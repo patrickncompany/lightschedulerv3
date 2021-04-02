@@ -1,6 +1,12 @@
 #include <Arduino.h>
 #include <RCSwitch.h>
 
+//forward-declares required in cpp / platformio
+//but not in ArduinoIDE
+void allOff();
+void allOn();
+void bootBlink();
+
 RCSwitch mySwitch = RCSwitch();
 
 char* sw1on="F0F0FFFF0101";
@@ -47,7 +53,7 @@ int ctlCode=0;
 boolean ctlAbort=false;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   pinMode(ledpin,OUTPUT);
   // PWM setup and attach
   ledcSetup(ledChannel, freq, resolution);
@@ -85,7 +91,7 @@ void loop() {
   ledcWrite(ledChannel,50);
   //Serial.println("Loop");
   if (ctlMode){
-    Serial.println("ctlMode is active");
+    //Serial.println("ctlMode is active");
     sw1state=digitalRead(sw1pin);
     //Serial.println("digitalRead1");
     if (sw1state == HIGH && !ctlAbort) {
@@ -115,7 +121,7 @@ void loop() {
           ledcWrite(ledChannel,50);
           delay(1000);
        }
-       Serial.println("waiting for ctlMode to end");
+       //Serial.println("waiting for ctlMode to end");
       if (millis() - sw1LastPressed > 1000){
         ctlMode=false;
         ctlAbort=false;
@@ -172,11 +178,11 @@ void loop() {
       }      
     }
   } else {
-    Serial.println("ctlMode NOT active");
+    //Serial.println("ctlMode NOT active");
     sw1state=digitalRead(sw1pin);
     //Serial.println("digitalRead2");
     if (sw1state == HIGH) {
-      Serial.println("ctlMode requested");
+      //Serial.println("ctlMode requested");
       ctlMode=true;
       ctlCode=0;
       sw1LastPressed=millis();
