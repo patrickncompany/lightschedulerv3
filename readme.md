@@ -9,9 +9,9 @@ After discovering ***#include <RCSwitch.h>*** every thing was much easier. This 
 ## **Mark I**
 The first version was a nodemcu ESP8266, a power LED and 433Mhz tx board. When powered up the it would set variables based on the current elapsed milliseconds using the function *millis();* Using timestamps and durations based on milliseconds it could toggle all plugs on/off every six hours starting at what every moment it was turned on.  
 
-    Example:
-    Plug it in at 5pm and plugs (lights) turn on and toggle every 6 hours. So, on at 5pm, off at 11pm, on at 5am, off at 11am, on at 5pm. Around and around it goes.  
-
+Example:  
+Plug it in at 5pm and plugs (lights) turn on and toggle every 6 hours.  
+So, on at 5pm, off at 11pm, on at 5am, off at 11am, on at 5pm. Around and around it goes.  
 ## **Mark II**
 Upgraded from the ESP8266 to the ESP32. I developed a single button control code input system using the LED to indicate inputs with blinks. Three control code sequences.  
 
