@@ -1,6 +1,6 @@
 # LightScheduler 
 ## Scheduler to automatically control 433Mhz rf remote plugs.
-This started as a project for controlling 433Mhz based rc plugs. My 5 plugs and 2 remotes were purchased online. I had no previous knowledge of radio frequency or radio controlled systems and just started tinkering.
+This was my first dive into Arduino programing and started as a project for controlling 433Mhz based rc plugs. My 5 plugs and 2 remotes were purchased online. I had no previous knowledge of radio frequency or radio controlled systems and just started tinkering.
 
 **LightScheduler** started on the ArduinoIDE and later moved to **PlatformIO** in **VSCode**. Initially, a nodemcu 8266 wired to a 433Mhz receiver and a male 3.5mm audio plug were used to sniff the various control signals from the origial remote. With the plug inserted to my PC's line in the command signals could be recorded as a sound wave with **Audacity**. A very dirty oscilliscope. Once the comands could be displayed as audio waves. I took screen caps used Photoshop to clean up the images and convert them to binary based on the highs and lows in the wave form. Some how I managed to get one plug working but the others were no-joy. So I decided to ***"read the instructions"***.
 
@@ -31,4 +31,4 @@ Upgraded from the ESP8266 to the ESP32. I developed a single button control code
 By adding 1-5 hours to the cycle on/off and being able to switch on/off cycles, any on/off schedule could now be set regardless of the power on time.
 
 ## **Mark III**
-The plan is to add an LCD screen and rotary encoder ***#include <Button2.h>*** and ***#include <ESPRotary.h>*** for controls. Also to switch from elapsed milliseconds to the ***#include <Time.h>*** library so the schedule can be set like any normal clock using hours, minutes and seconds.
+The plan is to get rid of the button ctrl codes and add a menu system using an LCD screen ***#include <SPI.h>, #include <Wire.h>, #include <Adafruit_GFX.h>, #include <Adafruit_SSD1306.h>*** and rotary encoder ***#include <Button2.h>*** and ***#include <ESPRotary.h>***. Also to switch from elapsed milliseconds to the ***#include <Time.h>*** library so the schedule can be set like any normal clock using hours, minutes and seconds.
